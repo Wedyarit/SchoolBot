@@ -120,7 +120,7 @@ def hometasks(key):
 	return "\n".join(array)
 
 def books(form):
-	file = open("../resources/books.json", encoding='utf8')
+	file = open("resources/books.json", encoding='utf8')
 	objects = json.load(file)
 	file.close()
 	result = []

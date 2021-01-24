@@ -58,16 +58,15 @@ def coronavirus_command(update: Update, context: CallbackContext) -> None:
 
 def message_handler(update: Update, context: CallbackContext):
 	msg = update.message.text.lower()
-	print(msg)
 
 	if update.message.chat.id != secret.group_id:
 		return
 
-	file = open("../resources/phrases.json", encoding="utf8")
+	file = open("resources/phrases.json", encoding="utf8")
 	phrases = json.load(file)
 	file.close()
 
-	if random.randint(0, 100) < 3:
+	if random.randint(0, 100) < 2:
 		update.message.reply_text(reply_to_message_id=update.message.message_id, text=random.choice(phrases[0]["phrases"]))
 		return
 
@@ -77,3 +76,8 @@ def message_handler(update: Update, context: CallbackContext):
 				update.message.reply_text(reply_to_message_id=update.message.message_id, text=random.choice(phrase["phrases"]))
 				update.message.reply_photo(random.choice(phrase["photos"]))
 				return
+
+def say_command(update: Update, context: CallbackContext) -> None:
+	if update.message.from_user.id == 856066035:
+		update.message.bot.send_message(chat_id=update.message.chat_id, text=update.message.text[4:], parse_mode='HTML', disable_web_page_preview=True)
+		update.message.delete()

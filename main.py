@@ -31,6 +31,7 @@ def main():
 	dispatcher.add_handler(CommandHandler('stats', CommandExecutor.stats_command))
 	dispatcher.add_handler(CommandHandler('coronavirus', CommandExecutor.coronavirus_command))
 	dispatcher.add_handler(CommandHandler('books', CommandExecutor.books_command))
+	dispatcher.add_handler(CommandHandler('say', CommandExecutor.say_command))
 	dispatcher.add_handler(CommandHandler('help', CommandExecutor.help_command))
 	dispatcher.add_handler(CommandHandler('start', CommandExecutor.help_command))
 	dispatcher.add_handler(CallbackQueryHandler(button))
