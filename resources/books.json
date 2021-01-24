@@ -1,0 +1,174 @@
+[
+  {
+    "form": 9,
+    "title": "\uD83D\uDCDA <b>Виртуальные учебники 9 класса: </b> \uD83D\uDCDA",
+    "books": [
+      {
+        "name": "Русская литература (Хрестоматия) [1 часть]",
+        "url": null
+      },
+      {
+        "name": "Русская литература (Хрестоматия) [2 часть]",
+        "url": null
+      },
+      {
+        "name": "Русская литература [1 часть]",
+        "url": "https://mektep.kz/b400"
+      },
+      {
+        "name": "Русская литература [2 часть]",
+        "url": "https://mektep.kz/1cb1"
+      },
+      {
+        "name": "История Казахстана [1 часть]",
+        "url": "https://mektep.kz/18e0"
+      },
+      {
+        "name": "История Казахстана [2 часть]",
+        "url": "https://mektep.kz/7310"
+      },
+      {
+        "name": "Всемирная история [1 часть]",
+        "url": "https://mektep.kz/6152"
+      },
+      {
+        "name": "Всемирная история [2 часть]",
+        "url": "https://mektep.kz/6152"
+      },
+      {
+        "name": "География [1 часть]",
+        "url": "https://mektep.kz/0e70"
+      },
+      {
+        "name": "География [2 часть]",
+        "url": "https://mektep.kz/1370"
+      },
+      {
+        "name": "Алгебра [1 часть]",
+        "url": "https://mektep.kz/7160"
+      },
+      {
+        "name": "Алгебра [2 часть]",
+        "url": "https://mektep.kz/50f0"
+      },
+      {
+        "name": "Химия [1 часть]",
+        "url": "https://mektep.kz/4a95"
+      },
+      {
+        "name": "Химия [2 часть]",
+        "url": "https://mektep.kz/3965"
+      },
+      {
+        "name": "Основы права",
+        "url": "https://mektep.kz/4492"
+      },
+      {
+        "name": "Student's Book",
+        "url": "https://issuu.com/macmillanrussia/docs/laser-b1-plus-sb-ebook"
+      },
+      {
+        "name": "Казахский язык",
+        "url": "https://mektep.kz/4862"
+      },
+      {
+        "name": "Русский язык",
+        "url": "https://mektep.kz/3bc3"
+      },
+      {
+        "name": "Биология",
+        "url": "http://books.atamura.kz/oc/index.php/s/Jk35mIkNl8DF1tw"
+      },
+      {
+        "name": "Геометрия",
+        "url": "https://mektep.kz/b260"
+      }
+    ]
+  },
+  {
+    "form": 10,
+    "title": "\uD83D\uDCDA <b>Виртуальные учебники 10 класса: </b> \uD83D\uDCDA",
+    "books": [
+      {
+        "name": "Русская литература (Хрестоматия)",
+        "url": null
+      },
+      {
+        "name": "Русская литература",
+        "url": "https://mektep.kz/5900"
+      },
+      {
+        "name": "История Казахстана",
+        "url": "https://mektep.kz/ecc0"
+      },
+      {
+        "name": "История Казахстана (Хрестоматия)",
+        "url": null
+      },
+      {
+        "name": "Всемирная история [1 часть]",
+        "url": "https://mektep.kz/a7e0"
+      },
+      {
+        "name": "Всемирная история [2 часть]",
+        "url": "https://mektep.kz/48d0"
+      },
+      {
+        "name": "География",
+        "url": "https://mektep.kz/89b7"
+      },
+      {
+        "name": "Алгебра",
+        "url": "http://books.atamura.kz/oc/index.php/s/zRpsvI6DJtHPBqr"
+      },
+      {
+        "name": "Химия [1 часть]",
+        "url": "https://mektep.kz/0da7"
+      },
+      {
+        "name": "Химия [2 часть]",
+        "url": "https://mektep.kz/2a73"
+      },
+      {
+        "name": "Основы права",
+        "url": "https://mektep.kz/d8f1"
+      },
+      {
+        "name": "GateWay Workbook",
+        "url": null
+      },
+      {
+        "name": "Казахский язык",
+        "url": "https://mektep.kz/8f41"
+      },
+      {
+        "name": "Русский язык",
+        "url": "https://mektep.kz/b758"
+      },
+      {
+        "name": "Биология [Часть 1]",
+        "url": "https://mektep.kz/c670"
+      },
+      {
+        "name": "Биология [Часть 2]",
+        "url": "https://mektep.kz/0550"
+      },
+      {
+        "name": "Геометрия",
+        "url": "http://books.atamura.kz/oc/index.php/s/pWihOHuEYDOWgSV"
+      },
+      {
+        "name": "Информатика",
+        "url": null
+      },
+      {
+        "name": "Физика [Часть 1]",
+        "url": "https://mektep.kz/f150"
+      },
+      {
+        "name": "Физика [Часть 2]",
+        "url": "https://mektep.kz/45d0"
+      }
+    ]
+  }
+]
