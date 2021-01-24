@@ -1,6 +1,6 @@
 # School Bot
 
-The bot makes it easier for the user to interact with the [school site](http://best.yos.kz/cabinet/).
+The bot originally makes it easier for the user to interact with the [school site](http://best.yos.kz/cabinet/) and others featues.
 
 # Features
 
