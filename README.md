@@ -24,7 +24,7 @@ pip install mechanicalsoup
 ```
 
 ## Contributing
-The works were done and decorated by [@Wedyarit (Vyacheslav)](https://github.com/Doggy4).
+The works were done and decorated by [@Wedyarit (Vyacheslav)](https://github.com/Wedyarit).
 
 ## Feedback
 Telegram: [@Wedyarit](https://t.me/Wedyarit)
