@@ -23,6 +23,7 @@ def button(update: Update, context: CallbackContext) -> None:
 	elif data == 'ht9':
 		query.edit_message_text(text=Parser.hometasks(9), parse_mode='HTML')
 
+
 def main():
 	updater = Updater(secret.token, use_context=True)
 	dispatcher = updater.dispatcher
