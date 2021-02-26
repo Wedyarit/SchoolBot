@@ -1,5 +1,6 @@
 import json
 import random
+import time
 from threading import Thread, Timer
 
 import requests
@@ -58,6 +59,10 @@ def coronavirus_command(update: Update, context: CallbackContext) -> None:
 	update.message.reply_text(reply_to_message_id=update.message.message_id, text=message_content, parse_mode='HTML')
 
 
+def delete_message(mes, update : Update):
+	time.sleep(10)
+	update.message.bot.deleteMessage(update.message.chat_id, mes.message_id)
+
 data = []
 
 def antiflood(user_id, chat_id, update : Update):
@@ -72,11 +77,17 @@ def antiflood(user_id, chat_id, update : Update):
 	if counter >= 3:
 		data.clear()
 		print("[!] " + str(user_id) + " флудит в " + str(chat_id))
-		update.message.bot.send_message(chat_id, text=f'[{update.message.from_user.first_name}](tg://user?id={user_id}), пожалуйста, не флудите.', parse_mode='Markdown')
+		mes = update.message.bot.send_message(chat_id, text=f'[{update.message.from_user.first_name}](tg://user?id={user_id}), пожалуйста, не флудите.', parse_mode='Markdown')
+		Thread(target=delete_message, args=(mes, update)).start()
 		for msg in msg_ids[1:]:
 			update.message.bot.deleteMessage(chat_id, int(msg))
 	elif counter < 3:
 		data.clear()
+
+def say_command(update: Update, context: CallbackContext) -> None:
+	if update.message.from_user.id == 856066035:
+		update.message.bot.send_message(chat_id=update.message.chat_id, text=update.message.text[4:], parse_mode='HTML', disable_web_page_preview=True)
+		update.message.delete()
 
 def message_handler(update: Update, context: CallbackContext):
 	string_to_append = str(update.message.chat_id) + ":" + str(update.message.from_user.id) + ":" + str(update.message.message_id)
@@ -102,8 +113,3 @@ def message_handler(update: Update, context: CallbackContext):
 				update.message.reply_text(reply_to_message_id=update.message.message_id, text=random.choice(phrase["phrases"]))
 				update.message.reply_photo(random.choice(phrase["photos"]))
 				return
-
-def say_command(update: Update, context: CallbackContext) -> None:
-	if update.message.from_user.id == 856066035:
-		update.message.bot.send_message(chat_id=update.message.chat_id, text=update.message.text[4:], parse_mode='HTML', disable_web_page_preview=True)
-		update.message.delete()
