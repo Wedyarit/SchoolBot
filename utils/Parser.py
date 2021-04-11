@@ -1,123 +1,86 @@
 import datetime
 import json
+import requests
 
 import bs4
-import mechanicalsoup
 
-import secret
+from utils.Dates import today, tomorrow, after_tomorrow, weekday
 
-def weekday(day):
-	switcher = {
-		0:"Понедельник",
-		1:"Вторник",
-		2:"Среда",
-		3:"Четверг",
-		4:"Пятница",
-		5:"Суббота",
-		6:"Воскресенье"
-		}
-	return switcher.get(day, "Invalid month")
+class Parser:
+	def __init__(self, form):
+		self.form = form
+		self.tooltip = True
+		self.session = requests.Session()
+		self.page = None
 
-def today():
-	today = datetime.date.today()
-	return today
-def tomorrow():
-	today = datetime.date.today()
-	tomorrow = today + datetime.timedelta(days=1)
-	return tomorrow
-def after_tomorrow():
-	today = datetime.date.today()
-	after_tomorrow = today + datetime.timedelta(days=2)
-	return after_tomorrow
+		self.authorize()
 
-def form_login9():
-	browser = mechanicalsoup.StatefulBrowser()
-	browser.open("http://best.yos.kz/cabinet/")
+	def authorize(self):
+		data = json.load(open("secret.json", encoding='utf-8'))
+		self.session.post(url="http://best.yos.kz/cabinet/", data={"login":next(auth for auth in data["auth"] if auth["form"] == self.form)["login"], "password":next(auth for auth in data["auth"] if auth["form"] == self.form)["password"]})
 
-	browser.select_form('form[method="post"]')
-	browser['login'] = secret.form_login9
-	browser['password'] = secret.form_password9
-	browser.submit_selected()
+	def parse_current_ht(self):
+		self.page = bs4.BeautifulSoup(self.session.get("http://best.yos.kz/cabinet/?module=diary&part=homeworks").text, "html.parser")
 
-	return browser
+	def parse_prev_ht(self, page):
+		self.tooltip = False
+		self.page = bs4.BeautifulSoup(self.session.get(f"http://best.yos.kz/cabinet/", params={"module":"diary", "part":"homeworks", "action":"preload", "id":"0", "page":page}, headers={"X-Requested-With":"XMLHttpRequest", "Cookie":f"_ym_d={self.session.cookies.get('_ym_d')}; _ym_uid={self.session.cookies.get('_ym_uid')}; _ym_isad={self.session.cookies.get('_ym_isad')}; __jsessid={self.session.cookies.get('__jsessid')}", "Referer":"http://best.yos.kz/cabinet/?module=diary&part=homeworks", "Host":"best.yos.kz"}).text, "html.parser")
 
-def form_login6():
-	browser = mechanicalsoup.StatefulBrowser()
-	browser.open("http://best.yos.kz/cabinet/")
+	def format_page(self):
+		result = []
 
-	browser.select_form('form[method="post"]')
-	browser['login'] = secret.form_login6
-	browser['password'] = secret.form_password6
-	browser.submit_selected()
+		if self.tooltip:
+			result = [f"<b>{self.form} класс</b>"]
 
-	return browser
+		table_title = self.page.findAll("td", {"class":"hw-title"})
+		table_pole = self.page.select(".hw-table")
 
-def hometasks(key):
-	array = []
-	browser = None
+		stable_date = ""
 
-	if key == 10:
-		browser = form_login9()
-		array.append("<b>10 класс</b>")
-	elif key == 7:
-		browser = form_login6()
-		array.append("<b>7 класс</b>")
+		for table_pole_res in table_pole[1:]:
+			for table in table_pole_res.findAll("tr", {"class":"cl-row"}):
 
-	soup = browser.open_relative("http://best.yos.kz/cabinet/?module=diary&part=homeworks")
-	b = bs4.BeautifulSoup(soup.text, "html.parser")
-	table_title = b.findAll("td", {
-		"class":"hw-title"
-		})
-	table_pole = b.select(".hw-table")
+				tab = table.findAll("td")
+				date = table_title[table_pole.index(table_pole_res) - 1].getText().replace("\n", "")
+				if not date.startswith(" "):
+					date = date[4:]
+				date = date[:10]
 
-	stable_date = ""
+				if stable_date != date:
+					result.append(f"▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n<b>{date}г.</b>")
+					stable_date = date
 
-	for table_pole_res in table_pole[1:]:
-		for table in table_pole_res.findAll("tr", {
-			"class":"cl-row"
-			}):
+					if date == today().strftime("%d.%m.%Y"):
+						today_day = today()
+						result.append(f"📚  <i>Сегодня - {weekday(today_day.weekday())}</i>  📚")
+					elif date == tomorrow().strftime("%d.%m.%Y"):
+						tomorrow_day = tomorrow()
+						result.append(f"🧨 <i>Завтра - {weekday(tomorrow_day.weekday())}</i> 🧨")
+					elif date == after_tomorrow().strftime("%d.%m.%Y"):
+						after_tomorrow_day = after_tomorrow()
+						result.append(f"📋 <i>Послезавтра - {weekday(after_tomorrow_day.weekday())}</i>  📋")
+					else:
+						date_time_obj = datetime.datetime.strptime(date, '%d.%m.%Y')
+						result.append(f"📆 <i>{weekday(date_time_obj.weekday())}</i> 📆")
 
-			tab = table.findAll("td")
-			date = table_title[table_pole.index(table_pole_res) - 1].getText().replace("\n", "")
-			if not date.startswith(" "):
-				date = date[4:]
-			date = date[:10]
+				result.append(f"➜ <u>{tab[1].getText()}:</u>")
 
-			if stable_date != date:
-				array.append("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n<b>" + date + "г.</b>")
-				stable_date = date
-
-				if date == today().strftime("%d.%m.%Y"):
-					today_day = today()
-					array.append("📚  <i>Сегодня - " + weekday(today_day.weekday()) + "</i>  📚")
-				elif date == tomorrow().strftime("%d.%m.%Y"):
-					tomorrow_day = tomorrow()
-					array.append("🧨 <i>Завтра - " + weekday(tomorrow_day.weekday()) + "</i> 🧨")
-				elif date == after_tomorrow().strftime("%d.%m.%Y"):
-					after_tomorrow_day = after_tomorrow()
-					array.append("📋 <i>Послезавтра - " + weekday(after_tomorrow_day.weekday()) + "</i>  📋")
+				if tab[2].getText().endswith("!") or tab[2].getText().endswith(".") or tab[2].getText().endswith(";") or tab[2].getText().endswith(","):
+					result.append(f"    {tab[2].getText()[0].upper() + tab[2].getText()[:-1][1:]};")
 				else:
-					date_time_obj = datetime.datetime.strptime(date, '%d.%m.%Y')
-					array.append("📆 <i>" + weekday(date_time_obj.weekday()) + "</i> 📆")
+					result.append(f"    {tab[2].getText()[0].upper() + tab[2].getText()[1:]};")
 
-			array.append("➜ <u>" + tab[1].getText() + ":</u>")
+				for a in table.find_all('a', href=True):
+					if len(a['href']) > 1:
+						result.append(f'  📎 <a href="http://best.yos.kz/cabinet/{a["href"]}">{a.getText()[0].upper() + a.getText()[1:]}</a>')
 
-			if tab[2].getText().endswith("!") or tab[2].getText().endswith(".") or tab[2].getText().endswith(";") or tab[2].getText().endswith(","):
-				array.append("    " + tab[2].getText()[0].upper() + tab[2].getText()[:-1][1:] + ";")
-			else:
-				array.append("    " + tab[2].getText()[0].upper() + tab[2].getText()[1:] + ";")
+		result.append("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬")
 
-			for a in table.find_all('a', href=True):
-				if len(a['href']) > 1:
-					array.append("  📎 " + '<a href="http://best.yos.kz/cabinet/' + a['href'] + '">' + a.getText()[0].upper() + a.getText()[1:] + '</a>')
+		if len(result) <= 3:
+			result.append("<b>Домашняя работа отсутствует.</b>")
+			result.append("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬")
 
-	array.append("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬")
-
-	if len(array) <= 3:
-		array.append("<b>Домашняя работа отсутствует.</b>")
-		array.append("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬")
-
-	return "\n".join(array)
+		return "\n".join(result)
 
 def books(form):
 	file = open("resources/books.json", encoding='utf8')

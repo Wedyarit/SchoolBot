@@ -7,15 +7,14 @@ import requests
 from telegram import InlineKeyboardButton, Update, InlineKeyboardMarkup
 from telegram.ext import CallbackContext
 
-import secret
 
 def hometasks_command(update: Update, context: CallbackContext) -> None:
-	keyboard = [[InlineKeyboardButton("10 класс", callback_data='ht10'), InlineKeyboardButton("7 класс", callback_data='ht7'), ]]
+	keyboard = [[InlineKeyboardButton("10 класс", callback_data='ht_10'), InlineKeyboardButton("7 класс", callback_data='ht_7')]]
 	reply_markup = InlineKeyboardMarkup(keyboard)
 	update.message.reply_text(reply_to_message_id=update.message.message_id, text='Выберите класс:', reply_markup=reply_markup)
 
 def books_command(update: Update, context: CallbackContext) -> None:
-	keyboard = [[InlineKeyboardButton("10 класс", callback_data='b10'), InlineKeyboardButton("9 класс", callback_data='b9'), ]]
+	keyboard = [[InlineKeyboardButton("10 класс", callback_data='b_10'), InlineKeyboardButton("9 класс", callback_data='b_9')]]
 	reply_markup = InlineKeyboardMarkup(keyboard)
 	update.message.reply_text(reply_to_message_id=update.message.message_id, text='Выберите класс:', reply_markup=reply_markup)
 
@@ -23,7 +22,7 @@ def help_command(update: Update, context: CallbackContext) -> None:
 	update.message.reply_text(reply_to_message_id=update.message.message_id, text=f"Приветствую, <b>{update.message.from_user.first_name}</b>, добро пожаловать! \n📄 <b>Список доступных Вам команд:</b> 📄\n/hometasks - Домашняя работа на неделю; \n/books - Список виртуальных учебников; \n/coronavirus - Статистика распространения пандемии; \n/help - Список доступных Вам команд;", parse_mode='HTML')
 
 def stats_command(update: Update, context: CallbackContext) -> None:
-	if update.message.chat.id != secret.group_id:
+	if update.message.chat.id != json.load(open("secret.json"))["group_id"]:
 		return
 
 	file = open("../resources/phrases.json", encoding="utf8")
@@ -58,31 +57,9 @@ def coronavirus_command(update: Update, context: CallbackContext) -> None:
 	message_content = f'🦠 <b>Статистика распространения Covid19</b> 🦠\n<b>Казахстан:</b>\n ➜ Подтвержденных случаев: {kazakhstan_data.get("Confirmed")}\n ➜ Смертей: {kazakhstan_data.get("Deaths")}\n ➜ Выздоровевших: {kazakhstan_data.get("Recovered")}\n ➜ Активно заражены: {kazakhstan_data.get("Active")}\n<b>Мир:</b>\n ➜ Новых подтвержденных случаев: {world_data.get("NewConfirmed")}\n ➜ Всего подтвержденных случаев: {world_data.get("TotalConfirmed")}\n ➜ Новых смертей: {world_data.get("NewDeaths")}\n ➜ Всего смертей: {world_data.get("TotalDeaths")}\n ➜ Новых выздоровевших: {world_data.get("NewRecovered")}\n ➜ Всего выздоровевших: {world_data.get("TotalRecovered")}'
 	update.message.reply_text(reply_to_message_id=update.message.message_id, text=message_content, parse_mode='HTML')
 
-
-def delete_message(mes, update : Update):
-	time.sleep(10)
+def delete_message_after(mes, after_seconds, update: Update):
+	time.sleep(after_seconds)
 	update.message.bot.deleteMessage(update.message.chat_id, mes.message_id)
-
-data = []
-
-def antiflood(user_id, chat_id, update : Update):
-	counter = 0
-	msg_ids = []
-	for idx, item in enumerate(data):
-		combined = chat_id + ":" + user_id
-		if combined in item:
-			msg_id = data[idx].split(":")[2]
-			msg_ids.append(msg_id)
-			counter += 1
-	if counter >= 3:
-		data.clear()
-		print("[!] " + str(user_id) + " флудит в " + str(chat_id))
-		mes = update.message.bot.send_message(chat_id, text=f'[{update.message.from_user.first_name}](tg://user?id={user_id}), пожалуйста, не флудите.', parse_mode='Markdown')
-		Thread(target=delete_message, args=(mes, update)).start()
-		for msg in msg_ids[1:]:
-			update.message.bot.deleteMessage(chat_id, int(msg))
-	elif counter < 3:
-		data.clear()
 
 def say_command(update: Update, context: CallbackContext) -> None:
 	if update.message.from_user.id == 856066035:
@@ -90,13 +67,9 @@ def say_command(update: Update, context: CallbackContext) -> None:
 		update.message.delete()
 
 def message_handler(update: Update, context: CallbackContext):
-	string_to_append = str(update.message.chat_id) + ":" + str(update.message.from_user.id) + ":" + str(update.message.message_id)
-	data.append(string_to_append)
-	Timer(1.5, antiflood, [str(update.message.from_user.id), str(update.message.chat_id), update]).start()
-
 	msg = update.message.text.lower()
 
-	if update.message.chat.id != secret.group_id:
+	if update.message.chat.id != json.load(open("secret.json"))["group_id"]:
 		return
 
 	file = open("resources/phrases.json", encoding="utf8")
@@ -104,12 +77,12 @@ def message_handler(update: Update, context: CallbackContext):
 	file.close()
 
 	if random.randint(0, 100) < 2:
-		update.message.reply_text(reply_to_message_id=update.message.message_id, text=random.choice(phrases[0]["phrases"]))
+		Thread(target=delete_message_after, args=(update.message.reply_text(reply_to_message_id=update.message.message_id, text=random.choice(phrases[0]["phrases"])), 30, update)).start()
 		return
 
 	for phrase in phrases:
 		for trigger in phrase["triggers"]:
 			if trigger in msg:
-				update.message.reply_text(reply_to_message_id=update.message.message_id, text=random.choice(phrase["phrases"]))
-				update.message.reply_photo(random.choice(phrase["photos"]))
+				Thread(target=delete_message_after, args=(update.message.reply_text(reply_to_message_id=update.message.message_id, text=random.choice(phrase["phrases"])), 30, update)).start()
+				Thread(target=delete_message_after, args=(update.message.reply_photo(random.choice(phrase["photos"])), 30, update)).start()
 				return
