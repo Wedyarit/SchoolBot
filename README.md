@@ -9,18 +9,16 @@ The bot originally makes it easier for the user to interact with the [school sit
 - /coronavirus - Pandemic spread statistics;
 - /help - List of commands available to you;
 
-# Dependencies
+# Requirements
 
 - [pyTelegramBotAPI](https://github.com/eternnoir/pyTelegramBotAPI)
 - [BeautifulSoup](https://pypi.org/project/beautifulsoup4/)
-- [MechanicalSoup](https://mechanicalsoup.readthedocs.io/en/stable/)
 - [Coronavirus COVID19 API](https://documenter.getpostman.com/view/10808728/SzS8rjbc)
 
 # Installation
 ```bash
 pip install pyTelegramBotAPI
 pip install bs4
-pip install mechanicalsoup
 ```
 
 ## Contributing
