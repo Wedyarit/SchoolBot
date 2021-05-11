@@ -9,7 +9,12 @@ from telegram.ext import CallbackContext
 
 
 def hometasks_command(update: Update, context: CallbackContext) -> None:
-	keyboard = [[InlineKeyboardButton("10 класс", callback_data='ht_10'), InlineKeyboardButton("7 класс", callback_data='ht_7')]]
+	keyboard = [[]]
+	for i, auth in enumerate(json.loads(open('secret.json', 'r').read())["auth"]):
+		if i % 2 == 0:
+			keyboard[int(i / 2)].append(InlineKeyboardButton(f'{auth["form"]} класс', callback_data=f'ht_{auth["form"]}'))
+		else:
+			keyboard.append([InlineKeyboardButton(f'{auth["form"]} класс', callback_data=f'ht_{auth["form"]}')])
 	reply_markup = InlineKeyboardMarkup(keyboard)
 	update.message.reply_text(reply_to_message_id=update.message.message_id, text='Выберите класс:', reply_markup=reply_markup)
 
